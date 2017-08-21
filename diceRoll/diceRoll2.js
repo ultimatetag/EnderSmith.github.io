@@ -4,8 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
   window.app.run();
 });
 
-new Context('x', 'y')
-
 // global variables
 function Context(content, preloaded) {
   return {
