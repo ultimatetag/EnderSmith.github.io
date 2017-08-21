@@ -88,17 +88,6 @@ function Addend() {
   this.negative = false;
 };
 
-function hi() {
-  this.name = 'hi';
-}
-
-function hello() {
-  this.name = 'hello';
-  this.x = function (a) {
-    alert(this)
-  }
-}
-
 function App(context) {
   return {
     context: context,
