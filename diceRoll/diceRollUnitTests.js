@@ -30,37 +30,36 @@ var testGlobals = {
 }
 
 function runTests(runTF) {
-  if (runTF == true) {
-    console.log('MEMORY FUNCTION TESTS:');
+  if (runTF === true) {
+
     var passFail = [
-      new UnitTest('simulateFirstVisit()', function() {
-          return (simulateFirstVisit(true) === '{}');
+      new UnitTest('MEMORY FUNCTION TEST: simulateFirstVisit()', function(app, test) {
+        test.report = app.simulateFirstVisit(true);
+        return test.report === '{}';
       }),
-      new UnitTest('checkMemory()', function() {
-        return (checkMemory() === "true");
+      new UnitTest('MEMORY FUNCTION TEST: checkMemory()', function(app, test) {
+        return (app.checkMemory() === "true");
       }),
-      new UnitTest('new SaveItem()', function() {
-        var saveItem = new SaveItem('test_id', 'test_name', ['test', 'array']);
+      new UnitTest('MEMORY FUNCTION TEST: new SaveItem()', function(app, test) {
+        var saveItem = app.saveItem('test_id', 'test_name', ['test', 'array']);
         saveItem = JSON.stringify(saveItem);
-        var localSaveItem = localStorage.saved;
+        var localSaveItem = app.context.storage().saved;
         return (localSaveItem.includes(saveItem));
       }),
-      new UnitTest('loadMemory()', function() {
-        var savedMenu = loadMemory();
-        return (content.savedMenu.includes(savedMenu));
+      new UnitTest('MEMORY FUNCTION TEST: loadMemory()', function(app, test) {
+        var savedMenu = app.loadMemory();
+        return (app.context.content.savedMenu.includes(savedMenu));
       }),
-      new UnitTest('deleteSaveItem()', function() {
-        return !('test_id' in deleteSaveItem('test_id', true));
+      new UnitTest('MEMORY FUNCTION TEST: deleteSaveItem()', function(app, test) {
+        return !('test_id' in app.deleteSaveItem('test_id', true));
       }),
-      new UnitTest('restoreDefaultSaveItems()', function() {
-        var saved = restoreDefaultSaveItems();
+      new UnitTest('MEMORY FUNCTION TEST: restoreDefaultSaveItems()', function(app, test) {
+        var saved = app.restoreDefaultSaveItems();
         saved = JSON.stringify(saved);
-        return (saved === localStorage.saved);
-      })
-    ];
-    console.log('DATA FUNCTION TESTS:');
-    passFail += [
-      new UnitTest('new Addend()', function() {
+        return (saved === app.context.storage().saved);
+      }),
+
+      new UnitTest('DATA FUNCTION TEST: new Addend()', function(app, test) {
         var blankAddend = new Addend();
         var pass = true;
         if (blankAddend.count !== 0) {
@@ -74,140 +73,163 @@ function runTests(runTF) {
         }
         return pass;
       }),
-      new UnitTest('addendChange()', function() {
+      new UnitTest('DATA FUNCTION TEST: addendChange()', function(app, test) {
         var pass = true;
-        var workingAddend = addendChange('d4', '', true);
+        var workingAddend = app.addendChange('d4', '', true);
         if (workingAddend.dn !== 'd4') {
           pass = false;
         }
-        workingAddend = addendChange(4, workingAddend);
+        workingAddend = app.addendChange(4, workingAddend);
         if (workingAddend.count !== 4) {
           pass = false;
         }
-        workingAddend = addendChange('-', workingAddend);
+        workingAddend = app.addendChange('-', workingAddend);
         if (workingAddend.negative !== true) {
           pass = false;
         }
-        workingAddend = addendChange('+', workingAddend);
+        workingAddend = app.addendChange('+', workingAddend);
         if (workingAddend.negative !== false) {
           pass = false;
         }
         return pass;
       }),
-      new UnitTest('addendToDisplay()', function() {
+      new UnitTest('DATA FUNCTION TEST: addendToDisplay()', function(app, test) {
         var pass = true;
-        if (addendToDisplay(testGlobals.sumArray[0]) !== testGlobals.sumArray[0].display) {
+        if (app.addendToDisplay(testGlobals.sumArray[0]) !== testGlobals.sumArray[0].display) {
           pass = false;
         }
-        if (addendToDisplay(testGlobals.sumArray[1]) !== testGlobals.sumArray[1].display) {
+        if (app.addendToDisplay(testGlobals.sumArray[1]) !== testGlobals.sumArray[1].display) {
           pass = false;
         }
-        if (addendToDisplay(testGlobals.sumArray[2]) !== testGlobals.sumArray[2].display) {
+        if (app.addendToDisplay(testGlobals.sumArray[2]) !== testGlobals.sumArray[2].display) {
           pass = false;
         }
         return pass;
       }),
-      new UnitTest('sumArrayToDisplay()', function() {
-        return (sumArrayToDisplay(testGlobals.sumArray) === testGlobals.sumArray_display);
+      new UnitTest('DATA FUNCTION TEST: sumArrayToDisplay()', function(app, test) {
+        return (app.sumArrayToDisplay(testGlobals.sumArray) === testGlobals.sumArray_display);
       }),
-      new UnitTest('addendExpand()', function() {
+      new UnitTest('DATA FUNCTION TEST: addendExpand()', function(app, test) {
         var pass = true;
-        if (addendExpand(testGlobals.sumArray[0]) !== testGlobals.sumArray[0].expanded) {
+        if (app.addendExpand(testGlobals.sumArray[0]) !== testGlobals.sumArray[0].expanded) {
           pass = false;
         }
-        if (addendExpand(testGlobals.sumArray[1]) !== testGlobals.sumArray[1].expanded) {
+        if (app.addendExpand(testGlobals.sumArray[1]) !== testGlobals.sumArray[1].expanded) {
           pass = false;
         }
-        if (addendExpand(testGlobals.sumArray[2]) !== testGlobals.sumArray[2].expanded) {
+        if (app.addendExpand(testGlobals.sumArray[2]) !== testGlobals.sumArray[2].expanded) {
           pass = false;
         }
         return pass;
       }),
-      new UnitTest('sumArrayExpand()', function() {
-        return (sumArrayExpand(testGlobals.sumArray) === testGlobals.sumArray_expanded);
+      new UnitTest('DATA FUNCTION TEST: sumArrayExpand()', function(app, test) {
+        return (app.sumArrayExpand(testGlobals.sumArray) === testGlobals.sumArray_expanded);
       }),
-      new UnitTest('randomIntByDice()', function() {
+      new UnitTest('DATA FUNCTION TEST: randomIntByDice()', function(app, test) {
         var pass = true;
         for (var i = 1; i <= 20; i++) {
-          var randomInt = randomIntByDice('d' + i);
+          var randomInt = app.randomIntByDice('d' + i);
           if ( 0 < randomInt && randomInt > i) {
             pass = false;
           }
         }
         return pass;
       }),
-      new UnitTest('subRandomIntForDice()', function() {
-        return !(subRandomIntForDice(testGlobals.sumArray_expanded).includes('d'));
+      new UnitTest('DATA FUNCTION TEST: subRandomIntForDice()', function(app, test) {
+        return !(app.subRandomIntForDice(testGlobals.sumArray_expanded).includes('d'));
       }),
-    ];
-    console.log('DISPLAY FUNCTION TESTS:');
-    passFail += [
-      new UnitTest('toggleSaved()', function() {
+
+      new UnitTest('DISPLAY FUNCTION TEST: toggleSaved()', function(app, test) {
         var result;
-        if (g.contentStatus === content.calculator) {
-          result = (toggleSaved() === content.savedMenu);
-        } else if (g.contentStatus === content.savedMenu) {
-          result = (toggleSaved() === content.calculator);
+        if (app.context.contentStatus === content.calculator) {
+          result = (app.toggleSaved() === content.savedMenu);
+        } else if (app.context.contentStatus === content.savedMenu) {
+          result = (app.toggleSaved() === content.calculator);
         }
         if (result === true) {
-          toggleSaved();
+          app.toggleSaved();
         }
         return result;
       }),
-      new UnitTest('printToInnerHTML()', function() {
+      new UnitTest('DISPLAY FUNCTION TEST: printToInnerHTML()', function(app, test) {
         var replacePass = true;
         var addonPass = true;
         document.getElementById('dispIn').innerHTML = 'init';
-        if (printToInnerHTML('dispIn', 'replaced', true) !== document.getElementById('dispIn').innerHTML) {
+        if (app.printToInnerHTML('dispIn', 'replaced', true) !== document.getElementById('dispIn').innerHTML) {
           replacePass = false;
         }
-        if ('replaced' + printToInnerHTML('dispIn', ' added on') !== document.getElementById('dispIn').innerHTML) {
+        if ('replaced' + app.printToInnerHTML('dispIn', ' added on') !== document.getElementById('dispIn').innerHTML) {
           addonPass = false;
         }
         return (replacePass && addonPass);
       }),
-      new UnitTest('clearScreen()', function() {
+      new UnitTest('DISPLAY FUNCTION TEST: clearScreen()', function(app, test) {
         var clearIn = true;
         var clearOut = true;
         document.getElementById('dispIn').innerHTML = 'not clear in';
         document.getElementById('dispOut').innerHTML = 'not clear out';
-        if (clearScreen() !== document.getElementById('dispIn').innerHTML) {
+        if (app.clearScreen() !== document.getElementById('dispIn').innerHTML) {
           clearIn = false;
         }
-        if (clearScreen() !== document.getElementById('dispOut').innerHTML) {
+        if (app.clearScreen() !== document.getElementById('dispOut').innerHTML) {
           clearOut = false;
         }
         return (clearIn && clearOut);
       }),
-      new UnitTest('clearSumArray()', function() {
-        g.sumArray = [5, 4, 3, 2, 1];
-        g.sumIndex = 5;
+      new UnitTest('DISPLAY FUNCTION TEST: clearSumArray()', function(app, test) {
+        app.context.sumArray = [5, 4, 3, 2, 1];
+        app.context.sumIndex = 5;
         var arr = '0,0';
-        return (clearSumArray() === arr);
+        return (app.clearSumArray() === arr);
       }),
     ];
-    clearScreen();
-    clearScreen();
-    return passFail;
+
+    var passed = true;
+    var failedCount = 0;
+    var passedCount = 0;
+    for (var i = 0; i < passFail.length; i++) {
+      var context = new Context(content, preloaded);
+      var app = new App(context);
+      app.run();
+
+      var test = passFail[i];
+      test.run(app, this);
+      if (test.passed) {
+        passedCount++;
+      } else {
+        failedCount++;
+        passed = false;
+      }
+      console.log((test.passed ? 'PASSED: ' : 'FAILED: ') + test.testName + ': ' + ': ' + test.report + ': ' + JSON.stringify(test.result || ''));
+      app.clearScreen();
+      app.clearScreen();
+    }
+    console.log('\nTEST RUN ' + (passed ? 'PASSED ' : 'FAILED ') + '(Failed: ' + failedCount + '; Passed: ' + passedCount + ')');
+
   } else {
     return;
   }
 }
 
 function UnitTest(testName, functionToBeTested) {
-  this.testName = testName;
-  this.functionToBeTested = functionToBeTested;
-  this.report;
-  try {
-    this.functionReturned = functionToBeTested()
-    if (this.functionReturned !== true) {
-      throw '\t\tunexpected result: ' + this.functionReturned;
+  return {
+    testName: testName,
+    functionToBeTested: functionToBeTested,
+    report: null,
+    result: null,
+    passed: false,
+    run: function (app) {
+      try {
+        this.result = this.functionToBeTested(app, this);
+        if (this.result === true) {
+          this.passed = true;
+          return true;
+        }
+      }
+      catch(err) {
+        this.report = ' ERROR: ' + err;
+        this.passed = false;
+      }
     }
-    this.report = ' PASS';
-  }
-  catch(err) {
-    this.report = ' FAIL:\n' + err;
-  }
-  console.log('\t' + this.testName + this.report);
-  return this.testName + this.report;
+  };
 }
